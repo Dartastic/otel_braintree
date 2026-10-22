@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_braintree_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_braintree';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class BraintreeResult {
+  /// Creates a result.
   const BraintreeResult({
     this.environment,
     this.merchantId,
@@ -92,8 +93,13 @@ class BraintreeResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class BraintreeCallResult<T> {
+  /// Creates a call result.
   const BraintreeCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final BraintreeResult? result;
 }
@@ -123,7 +129,7 @@ Future<T> tracedBraintree<T>({
   final span = _tracer().startSpan(
     'braintree $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
@@ -131,76 +137,77 @@ Future<T> tracedBraintree<T>({
       final res = r.result!;
       final extras = <Attribute<Object>>[];
       if (res.environment != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.environment',
           res.environment!,
         ));
       }
       if (res.merchantId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.merchant.id',
           res.merchantId!,
         ));
       }
       if (res.merchantAccountId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.merchant_account.id',
           res.merchantAccountId!,
         ));
       }
       if (res.paymentMethodNonce != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.payment_method.nonce',
           res.paymentMethodNonce!,
         ));
       }
       if (res.paymentMethodType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.payment_method.type',
           res.paymentMethodType!,
         ));
       }
       if (res.cardNetwork != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.card.network',
           res.cardNetwork!,
         ));
       }
       if (res.cardLast4 != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.card.last4',
           res.cardLast4!,
         ));
       }
       if (res.cardBin != null) {
-        extras.add(OTel.attributeString('braintree.card.bin', res.cardBin!));
+        extras.add(OTelAPI.attributeString('braintree.card.bin', res.cardBin!));
       }
       if (res.paypalEmail != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.paypal.email',
           res.paypalEmail!,
         ));
       }
       if (res.venmoUsername != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.venmo.username',
           res.venmoUsername!,
         ));
       }
       if (res.applePay != null) {
-        extras.add(OTel.attributeBool('braintree.apple_pay', res.applePay!));
+        extras.add(OTelAPI.attributeBool('braintree.apple_pay', res.applePay!));
       }
       if (res.googlePay != null) {
-        extras.add(OTel.attributeBool('braintree.google_pay', res.googlePay!));
+        extras
+            .add(OTelAPI.attributeBool('braintree.google_pay', res.googlePay!));
       }
       if (res.threeDSecureRequired != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'braintree.three_d_secure.required',
           res.threeDSecureRequired!,
         ));
       }
       if (res.threeDSecureStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.three_d_secure.status',
           res.threeDSecureStatus!,
         ));
@@ -213,13 +220,13 @@ Future<T> tracedBraintree<T>({
         }
       }
       if (res.transactionId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.transaction.id',
           res.transactionId!,
         ));
       }
       if (res.transactionStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.transaction.status',
           res.transactionStatus!,
         ));
@@ -233,31 +240,31 @@ Future<T> tracedBraintree<T>({
         }
       }
       if (res.transactionAmountCents != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'braintree.transaction.amount_cents',
           res.transactionAmountCents!,
         ));
       }
       if (res.transactionCurrency != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.transaction.currency',
           res.transactionCurrency!,
         ));
       }
       if (res.processorResponseCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.processor.response_code',
           res.processorResponseCode!,
         ));
       }
       if (res.gatewayRejectionReason != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.gateway.rejection_reason',
           res.gatewayRejectionReason!,
         ));
       }
       if (res.errorCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'braintree.error.code',
           res.errorCode!,
         ));
@@ -267,7 +274,7 @@ Future<T> tracedBraintree<T>({
         );
       }
       if (res.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           res.statusCode!,
         ));
@@ -278,13 +285,13 @@ Future<T> tracedBraintree<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
