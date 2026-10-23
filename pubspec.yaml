@@ -2,7 +2,7 @@ name: otel_braintree
 description: >-
   OpenTelemetry instrumentation for braintree by Dartastic.io. Adds standard
   OpenTelemetry observability to applications that use braintree.
-version: 0.1.0
+version: 0.1.1-wip
 repository: https://github.com/dartastic/otel_braintree
 homepage: https://dartastic.io
 
